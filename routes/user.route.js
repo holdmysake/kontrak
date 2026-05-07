@@ -43,7 +43,7 @@ router.post('/register', async (req, res) => {
             uid,
             username,
             name,
-            hashedPassword
+            password: hashedPassword
         })
 
         res.status(201).json({
