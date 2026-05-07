@@ -29,7 +29,7 @@ const startServer = async () => {
         console.log('✓ Database connected')
 
         app.listen(PORT, () => {
-            console.log(`Server running on port ${PORT} mantap`)
+            console.log(`Server running on port ${PORT}`)
         })
     } catch (err) {
         console.error('Unable to connect to database:', err)
