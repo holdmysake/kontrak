@@ -291,18 +291,23 @@ router.post('/update', authMiddleware, async (req, res) => {
         // Use updated values or existing values
         const updatedStart = start || contract.start
         const updatedEnd = end || contract.end
-        const updatedInitValue = init_value !== undefined ? parseFloat(init_value) : contract.init_value
         const updatedStatus = status || contract.status
+
+        const newInitValue = parseFloat(init_value)
+        const newCurrValue = parseFloat(curr_value)
         
-        const initValueChanged = init_value !== undefined && parseFloat(init_value) !== contract.init_value
-        
+        const initValueChanged = newInitValue !== parseFloat(contract.init_value)
+        const currValueChanged = newCurrValue !== parseFloat(contract.curr_value)
+
+        const updatedInitValue = initValueChanged ? newInitValue : contract.init_value
+
         // Priority:
-        // 1. curr_value explicitly provided → pakai langsung
-        // 2. init_value berubah tanpa curr_value → hitung ulang dari init_value - total_usage
+        // 1. curr_value berubah → pakai langsung (user sengaja ubah)
+        // 2. hanya init_value berubah → hitung ulang: init_value - total_usage
         // 3. tidak ada yang berubah → pakai nilai lama
         let updatedCurrValue
-        if (curr_value !== undefined) {
-            updatedCurrValue = parseFloat(curr_value)
+        if (currValueChanged) {
+            updatedCurrValue = newCurrValue
         } else if (initValueChanged) {
             updatedCurrValue = updatedInitValue - totalUsage
         } else {
