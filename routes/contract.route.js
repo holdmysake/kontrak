@@ -234,6 +234,7 @@ router.post('/update', authMiddleware, async (req, res) => {
             start,
             end,
             init_value,
+            curr_value,
             status,
             description
         } = req.body
@@ -293,8 +294,10 @@ router.post('/update', authMiddleware, async (req, res) => {
         const updatedInitValue = init_value !== undefined ? parseFloat(init_value) : contract.init_value
         const updatedStatus = status || contract.status
         
-        // Calculate new curr_value based on new init_value minus total usage
-        const updatedCurrValue = updatedInitValue - totalUsage
+        // Calculate new curr_value: manual override or based on init_value - total usage
+        const updatedCurrValue = curr_value !== undefined 
+            ? parseFloat(curr_value) 
+            : updatedInitValue - totalUsage
         
         // Calculate value_status automatically
         const { value_status } = calculateValueStatus(
